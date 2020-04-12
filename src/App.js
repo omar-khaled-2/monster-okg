@@ -1,26 +1,35 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, {Component} from 'react';
+import {CardList} from './components/card-list/card.list.component'
+import {SearchBox} from './components/searchBox/search-box'
 import './App.css';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+class App extends Component{
+  constructor(){
+    super();
+
+    this.state = {
+      monsters: [],
+      Search:''
+    }
+  }
+  componentDidMount(){
+    fetch('http://jsonplaceholder.typicode.com/users')
+      .then((jsonFound)=> jsonFound.json())
+      .then((body) => this.setState({monsters:body}));
+  }
+  render() {
+    const {monsters , Search} = this.state ;
+    const filterMonsters = monsters.filter(monster => monster.name.toLowerCase().includes(Search.toLowerCase()));
+    return(
+      <div className="App">
+        <h1>Monster Rolodex</h1>
+        <SearchBox change={search => this.setState({ Search:search.target.value })} />
+        <CardList>
+          {filterMonsters}
+        </CardList>
+      </div>
+    )
+  }
 }
 
 export default App;
